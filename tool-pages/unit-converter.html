@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6878152474987283"
+     crossorigin="anonymous"></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Einheitenumrechner</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Einheitenumrechner</h1>
+    <p>Wählen Sie eine Einheit und geben Sie einen Wert ein.</p>
+    <select id="unitType">
+      <option value="length">Länge</option>
+      <option value="weight">Gewicht</option>
+      <option value="temperature">Temperatur</option>
+    </select>
+    <input type="number" id="inputValue" placeholder="Wert">
+    <select id="fromUnit"></select>
+    <select id="toUnit"></select>
+    <button onclick="convertUnits()">Umrechnen</button>
+    <p id="result"></p>
+    <a href="../index.html">Zurück zur Startseite</a>
+  </div>
+  <script src="../unit-converter.js"></script>
+</body>
+</html>

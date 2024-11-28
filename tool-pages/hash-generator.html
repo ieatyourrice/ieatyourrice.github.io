@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6878152474987283"
+     crossorigin="anonymous"></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hash Generator</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Hash Generator</h1>
+    <textarea id="textToHash" placeholder="Text hier eingeben"></textarea>
+    <select id="hashAlgorithm">
+      <option value="SHA-256">SHA-256</option>
+      <option value="SHA-1">SHA-1</option>
+      <option value="MD5">MD5</option>
+    </select>
+    <button onclick="generateHash()">Hash generieren</button>
+    <p id="hashResult"></p>
+    <a href="../index.html">Zurück zur Startseite</a>
+  </div>
+  <script src="../hash-generator.js"></script>
+</body>
+</html>

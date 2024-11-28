@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6878152474987283"
+     crossorigin="anonymous"></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMI-Rechner</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .bmi-container {
+      text-align: center;
+    }
+    .bmi-container input {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+      width: 80%;
+      max-width: 300px;
+    }
+    .bmi-container button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+      background-color: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .bmi-container button:hover {
+      background-color: #005bb5;
+    }
+    .bmi-result {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: center;
+    }
+    .bmi-scale {
+      position: relative;
+      width: 90%;
+      max-width: 700px;
+      height: 30px;
+      margin: 20px auto;
+      display: flex;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .bmi-scale div {
+      flex: 1;
+      text-align: center;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      line-height: 30px;
+    }
+    .bmi-underweight {
+      background-color: #00bcd4;
+    }
+    .bmi-normal {
+      background-color: #4caf50;
+    }
+    .bmi-overweight {
+      background-color: #ff9800;
+    }
+    .bmi-obese {
+      background-color: #f44336;
+    }
+    .bmi-cursor {
+      position: absolute;
+      top: -20px;
+      left: 0;
+      width: 30px;
+      height: 30px;
+      background-color: black;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 30px;
+      transform: translateX(-50%);
+      font-weight: bold;
+      font-size: 14px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    .back-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #0078d7;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .back-button:hover {
+      background-color: #005bb5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container bmi-container">
+    <h1>BMI-Rechner</h1>
+    <p>Berechnen Sie Ihren Body Mass Index (BMI) und sehen Sie Ihre Position auf der Skala.</p>
+    <input type="number" id="weight" placeholder="Gewicht (kg)" step="0.1">
+    <input type="number" id="height" placeholder="Größe (m)" step="0.01">
+    <button onclick="calculateBMI()">Berechnen</button>
+    <div id="bmiResult" class="bmi-result"></div>
+    <div class="bmi-scale">
+      <div class="bmi-underweight">Untergewicht</div>
+      <div class="bmi-normal">Normal</div>
+      <div class="bmi-overweight">Übergewicht</div>
+      <div class="bmi-obese">Adipositas</div>
+      <div id="bmiCursor" class="bmi-cursor" style="display: none;">▲</div>
+    </div>
+    <a href="../index.html" class="back-button">Zurück zur Startseite</a>
+  </div>
+  <script>
+    function calculateBMI() {
+      const weight = parseFloat(document.getElementById('weight').value);
+      const height = parseFloat(document.getElementById('height').value);
+      const resultDiv = document.getElementById('bmiResult');
+      const cursor = document.getElementById('bmiCursor');
+      if (!weight || !height || weight <= 0 || height <= 0) {
+        resultDiv.innerHTML = '<p style="color: red;">Bitte geben Sie gültige Werte ein.</p>';
+        cursor.style.display = 'none';
+        return;
+      }
+      const bmi = (weight / (height * height)).toFixed(1);
+      let category = '';
+      let color = '';
+      let position = 0;
+
+      if (bmi < 18.5) {
+        category = 'Untergewicht';
+        color = '#00bcd4';
+        position = (bmi / 18.5) * 25;
+      } else if (bmi >= 18.5 && bmi < 24.9) {
+        category = 'Normalgewicht';
+        color = '#4caf50';
+        position = 25 + ((bmi - 18.5) / (24.9 - 18.5)) * 25;
+      } else if (bmi >= 25 && bmi < 29.9) {
+        category = 'Übergewicht';
+        color = '#ff9800';
+        position = 50 + ((bmi - 25) / (29.9 - 25)) * 25;
+      } else {
+        category = 'Adipositas';
+        color = '#f44336';
+        position = 75 + ((bmi - 30) / 10) * 25;
+      }
+
+      resultDiv.innerHTML = `
+        <p>Ihr BMI: <strong style="color: ${color};">${bmi}</strong></p>
+        <p>Kategorie: <strong style="color: ${color};">${category}</strong></p>
+      `;
+
+      cursor.style.left = `${position}%`;
+      cursor.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
