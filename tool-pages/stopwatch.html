@@ -1,22 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6878152474987283"
-     crossorigin="anonymous"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stoppuhr</title>
+  <title>Stopwatch</title>
   <link rel="stylesheet" href="../styles.css">
+  <style>
+    .stopwatch-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .stopwatch-time {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .stopwatch-buttons button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 5px;
+      background-color: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .stopwatch-buttons button:hover {
+      background-color: #005bb5;
+    }
+    .analog-clock {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 20px auto;
+      border: 5px solid #0078d7;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .analog-clock .center {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #0078d7;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .analog-clock .hand {
+      position: absolute;
+      width: 2px;
+      height: 70px;
+      background-color: #0078d7;
+      top: 50%;
+      left: 50%;
+      transform-origin: bottom;
+      transform: translate(-50%, -100%) rotate(0deg);
+      transition: transform 0.05s linear;
+    }
+    .back-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #0078d7;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .back-button:hover {
+      background-color: #005bb5;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Stoppuhr</h1>
-    <span id="time">00:00:00</span>
-    <button onclick="startStopwatch()">Start</button>
-    <button onclick="stopStopwatch()">Stop</button>
-    <button onclick="resetStopwatch()">Reset</button>
-    <a href="../index.html">Zurück zur Startseite</a>
+  <div class="container stopwatch-container">
+    <h1>Stopwatch</h1>
+    <div class="stopwatch-time" id="time">00:00:00</div>
+    <div class="analog-clock">
+      <div class="center"></div>
+      <div class="hand" id="secondHand"></div>
+    </div>
+    <div class="stopwatch-buttons">
+      <button onclick="startStopwatch()">Start</button>
+      <button onclick="stopStopwatch()">Stop</button>
+      <button onclick="resetStopwatch()">Reset</button>
+    </div>
+    <a href="../index.html" class="back-button">Zurück zur Startseite</a>
   </div>
-  <script src="../script.js"></script>
+  <script>
+    let stopwatchInterval;
+    let elapsedTime = 0;
+
+    // Format time in hh:mm:ss
+    function formatTime(milliseconds) {
+      const totalSeconds = Math.floor(milliseconds / 1000);
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+      const seconds = String(totalSeconds % 60).padStart(2, '0');
+      return `${hours}:${minutes}:${seconds}`;
+    }
+
+    // Start the stopwatch
+    function startStopwatch() {
+      if (stopwatchInterval) return;
+      const startTime = Date.now() - elapsedTime;
+      stopwatchInterval = setInterval(() => {
+        elapsedTime = Date.now() - startTime;
+        document.getElementById('time').textContent = formatTime(elapsedTime);
+        updateAnalogClock(elapsedTime);
+      }, 1000);
+    }
+
+    // Stop the stopwatch
+    function stopStopwatch() {
+      clearInterval(stopwatchInterval);
+      stopwatchInterval = null;
+    }
+
+    // Reset the stopwatch
+    function resetStopwatch() {
+      stopStopwatch();
+      elapsedTime = 0;
+      document.getElementById('time').textContent = "00:00:00";
+      updateAnalogClock(0);
+    }
+
+    // Update the analog clock
+    function updateAnalogClock(milliseconds) {
+      const totalSeconds = Math.floor(milliseconds / 1000);
+      const secondAngle = (totalSeconds % 60) * 6; // 360° / 60 seconds
+      document.getElementById('secondHand').style.transform = `translate(-50%, -100%) rotate(${secondAngle}deg)`;
+    }
+  </script>
 </body>
 </html>

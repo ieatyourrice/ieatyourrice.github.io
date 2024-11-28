@@ -1,29 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6878152474987283"
-     crossorigin="anonymous"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Einheitenumrechner</title>
+  <title>Converter</title>
   <link rel="stylesheet" href="../styles.css">
+  <style>
+    .converter-container {
+      text-align: center;
+    }
+    .converter-container input, .converter-container select {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+      width: 80%;
+      max-width: 300px;
+    }
+    .converter-container button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+      background-color: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .converter-container button:hover {
+      background-color: #005bb5;
+    }
+    .converter-result {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: center;
+    }
+    .back-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #0078d7;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .back-button:hover {
+      background-color: #005bb5;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Einheitenumrechner</h1>
-    <p>Wählen Sie eine Einheit und geben Sie einen Wert ein.</p>
-    <select id="unitType">
+  <div class="container converter-container">
+    <h1>Converter</h1>
+    <p>Wählen Sie eine Kategorie und Einheiten, um eine Umrechnung vorzunehmen.</p>
+    <select id="category" onchange="updateUnits()">
       <option value="length">Länge</option>
       <option value="weight">Gewicht</option>
       <option value="temperature">Temperatur</option>
     </select>
-    <input type="number" id="inputValue" placeholder="Wert">
+    <input type="number" id="inputValue" placeholder="Wert eingeben">
     <select id="fromUnit"></select>
     <select id="toUnit"></select>
     <button onclick="convertUnits()">Umrechnen</button>
-    <p id="result"></p>
-    <a href="../index.html">Zurück zur Startseite</a>
+    <div id="conversionResult" class="converter-result"></div>
+    <a href="../index.html" class="back-button">Zurück zur Startseite</a>
   </div>
-  <script src="../unit-converter.js"></script>
+  <script>
+    // Unit categories and units
+    const units = {
+      length: { meter: 1, kilometer: 1000, centimeter: 0.01, millimeter: 0.001, mile: 1609.34, yard: 0.9144, foot: 0.3048, inch: 0.0254 },
+      weight: { kilogram: 1, gram: 0.001, milligram: 0.000001, pound: 0.453592, ounce: 0.0283495 },
+      temperature: { celsius: 'celsius', fahrenheit: 'fahrenheit', kelvin: 'kelvin' }
+    };
+
+    // Update units based on selected category
+    function updateUnits() {
+      const category = document.getElementById('category').value;
+      const fromUnit = document.getElementById('fromUnit');
+      const toUnit = document.getElementById('toUnit');
+
+      // Clear previous options
+      fromUnit.innerHTML = '';
+      toUnit.innerHTML = '';
+
+      for (let unit in units[category]) {
+        const optionFrom = document.createElement('option');
+        optionFrom.value = unit;
+        optionFrom.textContent = unit;
+        fromUnit.appendChild(optionFrom);
+
+        const optionTo = document.createElement('option');
+        optionTo.value = unit;
+        optionTo.textContent = unit;
+        toUnit.appendChild(optionTo);
+      }
+    }
+
+    // Convert units
+    function convertUnits() {
+      const category = document.getElementById('category').value;
+      const inputValue = parseFloat(document.getElementById('inputValue').value);
+      const fromUnit = document.getElementById('fromUnit').value;
+      const toUnit = document.getElementById('toUnit').value;
+      const resultDiv = document.getElementById('conversionResult');
+
+      if (isNaN(inputValue)) {
+        resultDiv.innerHTML = '<p style="color: red;">Bitte geben Sie einen gültigen Wert ein.</p>';
+        return;
+      }
+
+      let result;
+
+      if (category === 'temperature') {
+        if (fromUnit === 'celsius' && toUnit === 'fahrenheit') {
+          result = (inputValue * 9/5) + 32;
+        } else if (fromUnit === 'celsius' && toUnit === 'kelvin') {
+          result = inputValue + 273.15;
+        } else if (fromUnit === 'fahrenheit' && toUnit === 'celsius') {
+          result = (inputValue - 32) * 5/9;
+        } else if (fromUnit === 'fahrenheit' && toUnit === 'kelvin') {
+          result = (inputValue - 32) * 5/9 + 273.15;
+        } else if (fromUnit === 'kelvin' && toUnit === 'celsius') {
+          result = inputValue - 273.15;
+        } else if (fromUnit === 'kelvin' && toUnit === 'fahrenheit') {
+          result = (inputValue - 273.15) * 9/5 + 32;
+        } else {
+          result = inputValue; // Same unit
+        }
+      } else {
+        // General conversion
+        const fromFactor = units[category][fromUnit];
+        const toFactor = units[category][toUnit];
+        result = inputValue * fromFactor / toFactor;
+      }
+
+      resultDiv.innerHTML = `<p>Ergebnis: <strong>${result.toFixed(2)}</strong> ${toUnit}</p>`;
+    }
+
+    // Initialize units on page load
+    window.onload = updateUnits;
+  </script>
 </body>
 </html>
