@@ -88,6 +88,12 @@
 
     const history = [];
 
+    // Format numbers to the required format: xxx.xxx,xxx
+    function formatNumber(value) {
+      return value
+        .toLocaleString('de-DE', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+    }
+
     // Update units based on selected category
     function updateUnits() {
       const category = document.getElementById('category').value;
@@ -149,13 +155,13 @@
         result = inputValue * fromFactor / toFactor;
       }
 
-      resultDiv.innerHTML = `<p>Ergebnis: <strong>${result.toFixed(2)}</strong> ${toUnit}</p>`;
+      resultDiv.innerHTML = `<p>Ergebnis: <strong>${formatNumber(result)}</strong> ${toUnit}</p>`;
       updateHistory(inputValue, fromUnit, result, toUnit);
     }
 
     // Update conversion history
     function updateHistory(inputValue, fromUnit, result, toUnit) {
-      history.unshift(`${inputValue} ${fromUnit} = ${result.toFixed(2)} ${toUnit}`);
+      history.unshift(`${formatNumber(inputValue)} ${fromUnit} = ${formatNumber(result)} ${toUnit}`);
       const displayedHistory = history.slice(0, 15);
       document.getElementById('history').innerHTML = '<h2>Verlauf</h2>' + displayedHistory.map(entry => `<p>${entry}</p>`).join('');
     }
