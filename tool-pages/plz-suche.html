@@ -61,25 +61,28 @@
     <a href="../index.html" class="back-button">Zurück zur Startseite</a>
   </div>
   <script>
-    const plzData = {
-      "10115": "Berlin",
-      "20095": "Hamburg",
-      "50667": "Köln",
-      "80331": "München",
-      "01067": "Dresden",
-      "04109": "Leipzig",
-      "14467": "Potsdam",
-      "99084": "Erfurt",
-      "70173": "Stuttgart",
-      "90402": "Nürnberg"
-    };
+    let plzData = {};
+    let cityData = {};
+
+    // Load PLZ data from an external JSON file
+    async function loadPLZData() {
+      try {
+        const response = await fetch('./plz-data.json');
+        plzData = await response.json();
+        cityData = Object.fromEntries(
+          Object.entries(plzData).map(([plz, city]) => [city.toLowerCase(), plz])
+        );
+      } catch (error) {
+        console.error("Fehler beim Laden der PLZ-Daten:", error);
+      }
+    }
 
     function searchByPLZ() {
-      const plzInput = document.getElementById("plzInput").value;
+      const plzInput = document.getElementById("plzInput").value.trim();
       const cityInput = document.getElementById("cityInput");
       const resultDiv = document.getElementById("result");
 
-      if (plzData[plzInput]) {
+      if (plzInput && plzData[plzInput]) {
         cityInput.value = plzData[plzInput];
         resultDiv.innerHTML = `<p>Die Stadt zur PLZ <strong>${plzInput}</strong> ist <strong>${plzData[plzInput]}</strong>.</p>`;
       } else if (plzInput) {
@@ -91,17 +94,13 @@
     }
 
     function searchByCity() {
-      const cityInput = document.getElementById("cityInput").value.toLowerCase();
+      const cityInput = document.getElementById("cityInput").value.trim().toLowerCase();
       const plzInput = document.getElementById("plzInput");
       const resultDiv = document.getElementById("result");
 
-      const matchingPLZ = Object.keys(plzData).find(
-        (plz) => plzData[plz].toLowerCase() === cityInput
-      );
-
-      if (matchingPLZ) {
-        plzInput.value = matchingPLZ;
-        resultDiv.innerHTML = `<p>Die PLZ für <strong>${cityInput}</strong> ist <strong>${matchingPLZ}</strong>.</p>`;
+      if (cityInput && cityData[cityInput]) {
+        plzInput.value = cityData[cityInput];
+        resultDiv.innerHTML = `<p>Die PLZ für <strong>${cityInput.charAt(0).toUpperCase() + cityInput.slice(1)}</strong> ist <strong>${cityData[cityInput]}</strong>.</p>`;
       } else if (cityInput) {
         plzInput.value = "";
         resultDiv.innerHTML = `<p style="color: red;">Keine PLZ für die Stadt <strong>${cityInput}</strong> gefunden.</p>`;
@@ -109,6 +108,9 @@
         resultDiv.innerHTML = "";
       }
     }
+
+    // Initialize by loading PLZ data
+    window.onload = loadPLZData;
   </script>
 </body>
 </html>
