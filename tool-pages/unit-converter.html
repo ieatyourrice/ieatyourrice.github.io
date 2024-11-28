@@ -60,10 +60,13 @@
       <option value="temperature">Temperatur</option>
     </select>
     <input type="number" id="inputValue" placeholder="Wert eingeben">
+    <label for="fromUnit">Von:</label>
     <select id="fromUnit"></select>
+    <label for="toUnit">Zu:</label>
     <select id="toUnit"></select>
     <button onclick="convertUnits()">Umrechnen</button>
     <div id="conversionResult" class="converter-result"></div>
+    <div id="history" class="converter-history"></div>
     <a href="../index.html" class="back-button">Zurück zur Startseite</a>
   </div>
   <script>
@@ -140,6 +143,23 @@
 
     // Initialize units on page load
     window.onload = updateUnits;
-  </script>
+  
+    const history = [];
+
+    function updateHistory(inputValue, fromUnit, result, toUnit) {
+      history.unshift(`${inputValue} ${fromUnit} = ${result.toFixed(2)} ${toUnit}`);
+      const maxHistory = Math.floor(window.innerHeight / 40);
+      const displayedHistory = history.slice(0, maxHistory);
+      document.getElementById('history').innerHTML = '<h2>Verlauf</h2>' + displayedHistory.map(entry => `<p>${entry}</p>`).join('');
+    }
+
+    function convertUnits() {
+      // Existing logic
+      if (!isNaN(inputValue)) {
+        updateHistory(inputValue, fromUnit, result, toUnit);
+      }
+    }
+    </script>
+    
 </body>
 </html>
