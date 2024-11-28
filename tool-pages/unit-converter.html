@@ -34,6 +34,13 @@
       font-size: 18px;
       text-align: center;
     }
+    .converter-history {
+      margin-top: 20px;
+      font-size: 16px;
+      text-align: center;
+      max-height: 200px;
+      overflow-y: auto;
+    }
     .back-button {
       display: inline-block;
       margin-top: 20px;
@@ -54,11 +61,13 @@
   <div class="container converter-container">
     <h1>Converter</h1>
     <p>Wählen Sie eine Kategorie und Einheiten, um eine Umrechnung vorzunehmen.</p>
+    <label for="category">Kategorie:</label>
     <select id="category" onchange="updateUnits()">
       <option value="length">Länge</option>
       <option value="weight">Gewicht</option>
       <option value="temperature">Temperatur</option>
     </select>
+    <label for="inputValue">Wert:</label>
     <input type="number" id="inputValue" placeholder="Wert eingeben">
     <label for="fromUnit">Von:</label>
     <select id="fromUnit"></select>
@@ -76,6 +85,8 @@
       weight: { kilogram: 1, gram: 0.001, milligram: 0.000001, pound: 0.453592, ounce: 0.0283495 },
       temperature: { celsius: 'celsius', fahrenheit: 'fahrenheit', kelvin: 'kelvin' }
     };
+
+    const history = [];
 
     // Update units based on selected category
     function updateUnits() {
@@ -139,27 +150,18 @@
       }
 
       resultDiv.innerHTML = `<p>Ergebnis: <strong>${result.toFixed(2)}</strong> ${toUnit}</p>`;
+      updateHistory(inputValue, fromUnit, result, toUnit);
+    }
+
+    // Update conversion history
+    function updateHistory(inputValue, fromUnit, result, toUnit) {
+      history.unshift(`${inputValue} ${fromUnit} = ${result.toFixed(2)} ${toUnit}`);
+      const displayedHistory = history.slice(0, 15);
+      document.getElementById('history').innerHTML = '<h2>Verlauf</h2>' + displayedHistory.map(entry => `<p>${entry}</p>`).join('');
     }
 
     // Initialize units on page load
     window.onload = updateUnits;
-  
-    const history = [];
-
-    function updateHistory(inputValue, fromUnit, result, toUnit) {
-      history.unshift(`${inputValue} ${fromUnit} = ${result.toFixed(2)} ${toUnit}`);
-      const maxHistory = Math.floor(window.innerHeight / 40);
-      const displayedHistory = history.slice(0, maxHistory);
-      document.getElementById('history').innerHTML = '<h2>Verlauf</h2>' + displayedHistory.map(entry => `<p>${entry}</p>`).join('');
-    }
-
-    function convertUnits() {
-      // Existing logic
-      if (!isNaN(inputValue)) {
-        updateHistory(inputValue, fromUnit, result, toUnit);
-      }
-    }
-    </script>
-    
+  </script>
 </body>
 </html>
