@@ -61,56 +61,52 @@
     <a href="../index.html" class="back-button">Zurück zur Startseite</a>
   </div>
   <script>
-    let plzData = {};
-    let cityData = {};
+    const apiBase = "https://api.zippopotam.us/de";
 
-    // Load PLZ data from an external JSON file
-    async function loadPLZData() {
-      try {
-        const response = await fetch('./plz-data.json');
-        plzData = await response.json();
-        cityData = Object.fromEntries(
-          Object.entries(plzData).map(([plz, city]) => [city.toLowerCase(), plz])
-        );
-      } catch (error) {
-        console.error("Fehler beim Laden der PLZ-Daten:", error);
-      }
-    }
-
-    function searchByPLZ() {
+    async function searchByPLZ() {
       const plzInput = document.getElementById("plzInput").value.trim();
       const cityInput = document.getElementById("cityInput");
       const resultDiv = document.getElementById("result");
 
-      if (plzInput && plzData[plzInput]) {
-        cityInput.value = plzData[plzInput];
-        resultDiv.innerHTML = `<p>Die Stadt zur PLZ <strong>${plzInput}</strong> ist <strong>${plzData[plzInput]}</strong>.</p>`;
-      } else if (plzInput) {
+      if (!plzInput) {
+        resultDiv.innerHTML = "";
+        return;
+      }
+
+      try {
+        const response = await fetch(`${apiBase}/${plzInput}`);
+        if (!response.ok) throw new Error("PLZ nicht gefunden");
+
+        const data = await response.json();
+        const places = data.places.map(place => place["place name"]).join(", ");
+        cityInput.value = places;
+
+        resultDiv.innerHTML = `<p>Die Stadt(en) zur PLZ <strong>${plzInput}</strong> sind: <strong>${places}</strong>.</p>`;
+      } catch (error) {
         cityInput.value = "";
         resultDiv.innerHTML = `<p style="color: red;">Keine Stadt für die PLZ <strong>${plzInput}</strong> gefunden.</p>`;
-      } else {
-        resultDiv.innerHTML = "";
       }
     }
 
-    function searchByCity() {
+    async function searchByCity() {
       const cityInput = document.getElementById("cityInput").value.trim().toLowerCase();
       const plzInput = document.getElementById("plzInput");
       const resultDiv = document.getElementById("result");
 
-      if (cityInput && cityData[cityInput]) {
-        plzInput.value = cityData[cityInput];
-        resultDiv.innerHTML = `<p>Die PLZ für <strong>${cityInput.charAt(0).toUpperCase() + cityInput.slice(1)}</strong> ist <strong>${cityData[cityInput]}</strong>.</p>`;
-      } else if (cityInput) {
+      if (!cityInput) {
+        resultDiv.innerHTML = "";
+        return;
+      }
+
+      try {
+        // No direct city search API, so this feature will need a custom database or a third-party service
+        resultDiv.innerHTML = `<p style="color: red;">Stadtsuche ist derzeit nicht unterstützt.</p>`;
+        plzInput.value = "";
+      } catch (error) {
         plzInput.value = "";
         resultDiv.innerHTML = `<p style="color: red;">Keine PLZ für die Stadt <strong>${cityInput}</strong> gefunden.</p>`;
-      } else {
-        resultDiv.innerHTML = "";
       }
     }
-
-    // Initialize by loading PLZ data
-    window.onload = loadPLZData;
   </script>
 </body>
 </html>
