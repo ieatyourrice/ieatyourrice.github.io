@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Rechner</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="../script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>BMI Rechner</h1>
+        <p>Ermitteln Sie Ihren Body-Mass-Index (BMI) und erfahren Sie, wie Ihr Gewicht einzuordnen ist.</p>
+        <form id="bmiForm" class="modern-form">
+            <div class="form-group">
+                <label for="weight">Gewicht (kg):</label>
+                <input type="number" id="weight" placeholder="z.B. 70" required>
+            </div>
+            <div class="form-group">
+                <label for="height">Größe (cm):</label>
+                <input type="number" id="height" placeholder="z.B. 170" required>
+            </div>
+            <button type="button" onclick="calculateBMI()">BMI berechnen</button>
+        </form>
+        <div id="bmiResult" class="result-section" style="display: none;">
+            <h2>Ihr Ergebnis</h2>
+            <p id="bmiValue" class="bmi-value"></p>
+            <div id="bmiScale" class="bmi-scale">
+                <div id="bmiMarker" class="bmi-marker"></div>
+            </div>
+            <p id="bmiCategory" class="bmi-category"></p>
+        </div>
+        <div class="back-button">
+            <a href="../index.html">Zurück zur Startseite</a>
+        </div>
+    </div>
+</body>
+</html>
