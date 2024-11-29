@@ -112,3 +112,22 @@ button:hover {
 .back-button a:hover {
     background: #005bb5;
 }
+
+/* Styles for BMI Calculator */
+.bmi-scale {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    background: linear-gradient(to right, #4caf50, #ffeb3b, #f44336);
+    border-radius: 10px;
+    margin: 20px 0;
+}
+.bmi-marker {
+    position: absolute;
+    top: -5px;
+    width: 10px;
+    height: 30px;
+    background-color: #000;
+    border-radius: 5px;
+    transform: translateX(-50%);
+}

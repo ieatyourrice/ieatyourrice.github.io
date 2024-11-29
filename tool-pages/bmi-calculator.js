@@ -1,5 +1,5 @@
 
-// JavaScript for BMI Calculator
+// JavaScript for BMI Calculator with dynamic scale
 function calculateBMI() {
     const weight = parseFloat(document.getElementById("weight").value);
     const height = parseFloat(document.getElementById("height").value) / 100;
@@ -22,10 +22,10 @@ function calculateBMI() {
         markerPosition = 10;
     } else if (bmi >= 18.5 && bmi < 25) {
         category = "Normalgewicht";
-        markerPosition = 50;
+        markerPosition = 40;
     } else if (bmi >= 25 && bmi < 30) {
         category = "Übergewicht";
-        markerPosition = 75;
+        markerPosition = 70;
     } else {
         category = "Adipositas";
         markerPosition = 90;
