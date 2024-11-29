@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verzugszinsrechner</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .calculator-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .calculator-container input, .calculator-container select {
+      width: 80%;
+      max-width: 400px;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+    }
+    .calculator-container button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+      background-color: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .calculator-container button:hover {
+      background-color: #005bb5;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: center;
+    }
+    .result p {
+      margin: 5px 0;
+    }
+    .back-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #0078d7;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .back-button:hover {
+      background-color: #005bb5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container calculator-container">
+    <h1>Verzugszinsrechner</h1>
+    <p>Berechnen Sie Verzugszinsen basierend auf Ihrer Hauptforderung und dem Verzugszeitraum.</p>
+    <input type="number" id="principal" placeholder="Hauptforderung (€)" min="0" step="0.01">
+    <input type="number" id="interestRate" placeholder="Verzugszinssatz (%)" min="0" step="0.01" value="5">
+    <label for="startDate">Verzugsbeginn:</label>
+    <input type="date" id="startDate">
+    <label for="endDate">Verzugsende:</label>
+    <input type="date" id="endDate">
+    <button onclick="calculateInterest()">Verzugszinsen berechnen</button>
+    <div id="result" class="result"></div>
+    <a href="../index.html" class="back-button">Zurück zur Startseite</a>
+  </div>
+  <script>
+    function calculateInterest() {
+      const principal = parseFloat(document.getElementById("principal").value);
+      const interestRate = parseFloat(document.getElementById("interestRate").value);
+      const startDate = new Date(document.getElementById("startDate").value);
+      const endDate = new Date(document.getElementById("endDate").value);
+      const resultDiv = document.getElementById("result");
+
+      if (isNaN(principal) || isNaN(interestRate) || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        resultDiv.innerHTML = '<p style="color: red;">Bitte geben Sie gültige Werte ein.</p>';
+        return;
+      }
+
+      if (endDate <= startDate) {
+        resultDiv.innerHTML = '<p style="color: red;">Das Enddatum muss nach dem Startdatum liegen.</p>';
+        return;
+      }
+
+      // Calculate number of days between the dates
+      const millisecondsPerDay = 24 * 60 * 60 * 1000;
+      const days = Math.ceil((endDate - startDate) / millisecondsPerDay);
+
+      // Calculate interest
+      const annualInterest = (principal * interestRate) / 100;
+      const dailyInterest = annualInterest / 365;
+      const totalInterest = dailyInterest * days;
+
+      const totalAmount = principal + totalInterest;
+
+      resultDiv.innerHTML = `
+        <p><strong>Ergebnisse:</strong></p>
+        <p><strong>Verzugsdauer:</strong> ${days} Tage</p>
+        <p><strong>Verzugszinsen:</strong> €${totalInterest.toFixed(2)}</p>
+        <p><strong>Gesamtbetrag:</strong> €${totalAmount.toFixed(2)}</p>
+      `;
+    }
+  </script>
+</body>
+</html>
