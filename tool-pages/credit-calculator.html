@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kreditrechner</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .calculator-container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .form-group input, .form-group select, .form-group button {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .form-group button {
+      background-color: #0078d7;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .form-group button:hover {
+      background-color: #005bb5;
+    }
+    .result-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .result-table th, .result-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    .result-table th {
+      background-color: #f4f4f4;
+    }
+    .result-summary {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+    .back-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #0078d7;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .back-button:hover {
+      background-color: #005bb5;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator-container">
+    <h1>Kreditrechner</h1>
+    <div class="form-group">
+      <label for="calculationType">Was möchten Sie berechnen?</label>
+      <select id="calculationType" onchange="adjustInputFields()">
+        <option value="amount">Kreditbetrag</option>
+        <option value="rate">Rate</option>
+        <option value="duration">Laufzeit</option>
+        <option value="interest">Zinssatz</option>
+        <option value="residual">Restschuld</option>
+      </select>
+    </div>
+    <div id="inputFields">
+      <div class="form-group">
+        <label for="loanAmount">Kreditbetrag (€):</label>
+        <input type="number" id="loanAmount" placeholder="Kreditbetrag eingeben" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label for="interestRate">Zinssatz (% p.a.):</label>
+        <input type="number" id="interestRate" placeholder="Zinssatz eingeben" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label for="repaymentRate">Rückzahlungsrate (€):</label>
+        <input type="number" id="repaymentRate" placeholder="Rate eingeben" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label for="rateInterval">Ratenintervall:</label>
+        <select id="rateInterval">
+          <option value="monthly">Monatlich</option>
+          <option value="quarterly">Vierteljährlich</option>
+          <option value="semiannual">Halbjährlich</option>
+          <option value="annual">Jährlich</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <input type="checkbox" id="processingFeeToggle" onclick="toggleField('processingFee')">
+        <label for="processingFeeToggle">Bearbeitungsgebühr</label>
+        <input type="number" id="processingFee" placeholder="Bearbeitungsgebühr (€)" min="0" step="0.01" disabled>
+      </div>
+      <div class="form-group">
+        <input type="checkbox" id="disagioToggle" onclick="toggleField('disagio')">
+        <label for="disagioToggle">Disagio</label>
+        <input type="number" id="disagio" placeholder="Disagio (€)" min="0" step="0.01" disabled>
+      </div>
+    </div>
+    <button onclick="calculateCredit()">Berechnen</button>
+    <table class="result-table" id="resultTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>Rate Nr.</th>
+          <th>Zinsanteil (€)</th>
+          <th>Tilgungsanteil (€)</th>
+          <th>Restschuld (€)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="result-summary" id="resultSummary" style="display:none;"></div>
+    <a href="../index.html" class="back-button">Zurück zur Startseite</a>
+  </div>
+  <script>
+    function toggleField(fieldId) {
+      const field = document.getElementById(fieldId);
+      field.disabled = !field.disabled;
+    }
+
+    function adjustInputFields() {
+      const calculationType = document.getElementById("calculationType").value;
+      const inputFields = document.getElementById("inputFields");
+      // Adjust input fields based on the calculation type
+      // Placeholder for functionality to dynamically change fields
+    }
+
+    function calculateCredit() {
+      const loanAmount = parseFloat(document.getElementById("loanAmount").value);
+      const interestRate = parseFloat(document.getElementById("interestRate").value);
+      const repaymentRate = parseFloat(document.getElementById("repaymentRate").value);
+      const rateInterval = document.getElementById("rateInterval").value;
+
+      // Placeholder for actual calculation logic
+
+      const resultTable = document.getElementById("resultTable");
+      const resultSummary = document.getElementById("resultSummary");
+
+      resultTable.style.display = "block";
+      resultSummary.style.display = "block";
+
+      resultSummary.innerHTML = "<p>Berechnung abgeschlossen. Details folgen.</p>";
+    }
+  </script>
+</body>
+</html>
