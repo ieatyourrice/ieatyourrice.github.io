@@ -8,13 +8,13 @@
   <style>
     .calculator-container {
       max-width: 800px;
-      margin: 0 auto;
+      margin: 20px auto;
       padding: 20px;
       background-color: #f9f9f9;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-    .calculator-container h1 {
+    h1 {
       text-align: center;
       color: #333;
     }
@@ -82,14 +82,11 @@
     <h1>Verzugszinsrechner</h1>
     <div class="form-group">
       <label for="principal">Hauptforderung (€):</label>
-      <input type="number" id="principal" placeholder="Geben Sie den Betrag ein" min="0" step="0.01">
+      <input type="number" id="principal" placeholder="Kreditbetrag eingeben" min="0" step="0.01">
     </div>
     <div class="form-group">
-      <label for="businessType">Art des Geschäftes:</label>
-      <select id="businessType">
-        <option value="consumer">Verbrauchergeschäft</option>
-        <option value="commercial">Handelsgeschäft</option>
-      </select>
+      <label for="interestRate">Zinssatz (%):</label>
+      <input type="number" id="interestRate" placeholder="Zinssatz eingeben" min="0" step="0.01">
     </div>
     <div class="form-group">
       <label for="startDate">Verzugsbeginn:</label>
@@ -99,36 +96,13 @@
       <label for="endDate">Verzugsende:</label>
       <input type="date" id="endDate">
     </div>
-    <div class="form-group">
-      <label for="dynamicRate">Dynamischer Zinssatz (x% über Basiszinssatz):</label>
-      <input type="number" id="dynamicRate" placeholder="Zinssatz über Basis (%)" min="0" step="0.01">
-    </div>
-    <div class="form-group">
-      <input type="checkbox" id="fixedRateToggle">
-      <label for="fixedRateToggle">Fester Zinssatz (p.a.)</label>
-      <input type="number" id="fixedRate" placeholder="Fester Zinssatz (%)" min="0" step="0.01" disabled>
-    </div>
-    <div class="form-group">
-      <input type="checkbox" id="partialPaymentToggle">
-      <label for="partialPaymentToggle">Teilzahlungen aktivieren</label>
-      <div id="partialPayments" style="display:none;">
-        <input type="number" id="partialAmount" placeholder="Teilzahlung (€)" min="0" step="0.01">
-        <input type="date" id="partialDate">
-        <button onclick="addPartialPayment()">Teilzahlung hinzufügen</button>
-      </div>
-    </div>
-    <div class="form-group">
-      <input type="checkbox" id="lateFeeToggle">
-      <label for="lateFeeToggle">Verzugspauschale (40€) gemäß BGB § 288 (5)</label>
-    </div>
     <button onclick="calculateDelayInterest()">Berechnen</button>
     <table class="result-table" id="resultTable" style="display:none;">
       <thead>
         <tr>
           <th>Zeitraum</th>
-          <th>Basiszinssatz (%)</th>
           <th>Zinssatz (%)</th>
-          <th>Verzugszinsen (€)</th>
+          <th>Zinsen (€)</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -137,28 +111,46 @@
     <a href="../index.html" class="back-button">Zurück zur Startseite</a>
   </div>
   <script>
-    const basisRates = [
-      { start: "2010-01-01", end: "2010-12-31", rate: -0.38 },
-      { start: "2011-01-01", end: "2011-12-31", rate: -0.12 },
-      { start: "2012-01-01", end: "2012-12-31", rate: -0.13 }
-      // Add more rates as needed
-    ];
-    const partialPayments = [];
+    function calculateDelayInterest() {
+      const principal = parseFloat(document.getElementById("principal").value);
+      const interestRate = parseFloat(document.getElementById("interestRate").value);
+      const startDate = new Date(document.getElementById("startDate").value);
+      const endDate = new Date(document.getElementById("endDate").value);
 
-    function addPartialPayment() {
-      const amount = parseFloat(document.getElementById("partialAmount").value);
-      const date = document.getElementById("partialDate").value;
-      if (isNaN(amount) || !date) {
+      if (isNaN(principal) || isNaN(interestRate) || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
         alert("Bitte geben Sie gültige Werte ein.");
         return;
       }
-      partialPayments.push({ amount, date });
-      alert("Teilzahlung hinzugefügt.");
-    }
 
-    function calculateDelayInterest() {
-      // Placeholder for full implementation
-      alert("Berechnung erfolgt basierend auf den Eingaben.");
+      if (endDate <= startDate) {
+        alert("Das Enddatum muss nach dem Startdatum liegen.");
+        return;
+      }
+
+      // Calculate number of days between the dates
+      const millisecondsPerDay = 24 * 60 * 60 * 1000;
+      const days = Math.ceil((endDate - startDate) / millisecondsPerDay);
+
+      // Calculate interest
+      const annualInterest = (principal * interestRate) / 100;
+      const dailyInterest = annualInterest / 365;
+      const totalInterest = dailyInterest * days;
+
+      const resultTable = document.getElementById("resultTable");
+      const resultSummary = document.getElementById("resultSummary");
+      resultTable.style.display = "block";
+      resultSummary.style.display = "block";
+
+      const tbody = resultTable.querySelector("tbody");
+      tbody.innerHTML = `
+        <tr>
+          <td>${startDate.toISOString().split("T")[0]} bis ${endDate.toISOString().split("T")[0]}</td>
+          <td>${interestRate.toFixed(2)}</td>
+          <td>${totalInterest.toFixed(2)}</td>
+        </tr>
+      `;
+
+      resultSummary.innerHTML = `<p>Gesamte Zinsen: €${totalInterest.toFixed(2)}</p>`;
     }
   </script>
 </body>
