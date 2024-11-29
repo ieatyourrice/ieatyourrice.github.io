@@ -1,1 +1,0 @@
-console.log('Scripts for tools will be implemented here');
