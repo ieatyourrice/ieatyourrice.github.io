@@ -44,6 +44,9 @@
     .claims-table th {
       background-color: #f4f4f4;
     }
+    .claims-table .highlight {
+      background-color: #e8f5e9;
+    }
     .result-summary {
       margin-top: 20px;
       font-size: 18px;
@@ -69,34 +72,62 @@
   <div class="container calculator-container">
     <h1>Verzugszinsrechner</h1>
     <p>Fügen Sie mehrere Forderungen hinzu und berechnen Sie die Verzugszinsen.</p>
+    <label for="businessType">Art des Geschäftes:</label>
+    <select id="businessType">
+      <option value="consumer">Verbrauchergeschäft</option>
+      <option value="commercial">Handelsgeschäft</option>
+    </select>
     <input type="number" id="principal" placeholder="Hauptforderung (€)" min="0" step="0.01">
-    <input type="number" id="interestRate" placeholder="Verzugszinssatz (%)" min="0" step="0.01" value="5">
+    <input type="number" id="interestRate" placeholder="Zinssatz (%)" min="0" step="0.01" value="5">
     <label for="startDate">Verzugsbeginn:</label>
     <input type="date" id="startDate">
     <label for="endDate">Verzugsende:</label>
     <input type="date" id="endDate">
     <button onclick="addClaim()">Forderung hinzufügen</button>
-    <div>
-      <table class="claims-table" id="claimsTable">
-        <thead>
-          <tr>
-            <th>Hauptforderung (€)</th>
-            <th>Zinssatz (%)</th>
-            <th>Verzugsbeginn</th>
-            <th>Verzugsende</th>
-            <th>Verzugszinsen (€)</th>
-            <th>Gesamtbetrag (€)</th>
-            <th>Aktionen</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <input type="checkbox" id="partialPaymentToggle" onclick="togglePartialPayments()"> Teilzahlungen aktivieren
+    <div id="partialPayments" style="display:none;">
+      <input type="number" id="partialAmount" placeholder="Teilzahlung (€)" min="0" step="0.01">
+      <input type="date" id="partialDate">
+      <button onclick="addPartialPayment()">Teilzahlung hinzufügen</button>
     </div>
+    <table class="claims-table" id="claimsTable">
+      <thead>
+        <tr>
+          <th>Hauptforderung (€)</th>
+          <th>Zinssatz (%)</th>
+          <th>Verzugsbeginn</th>
+          <th>Verzugsende</th>
+          <th>Verzugszinsen (€)</th>
+          <th>Gesamtbetrag (€)</th>
+          <th>Aktionen</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
     <div id="resultSummary" class="result-summary"></div>
     <a href="../index.html" class="back-button">Zurück zur Startseite</a>
   </div>
   <script>
     const claims = [];
+    const partialPayments = [];
+
+    function togglePartialPayments() {
+      const partialPaymentDiv = document.getElementById("partialPayments");
+      partialPaymentDiv.style.display = partialPaymentDiv.style.display === "none" ? "block" : "none";
+    }
+
+    function addPartialPayment() {
+      const partialAmount = parseFloat(document.getElementById("partialAmount").value);
+      const partialDate = new Date(document.getElementById("partialDate").value);
+
+      if (isNaN(partialAmount) || isNaN(partialDate.getTime())) {
+        alert("Bitte geben Sie gültige Werte für die Teilzahlung ein.");
+        return;
+      }
+
+      partialPayments.push({ amount: partialAmount, date: partialDate.toISOString().split("T")[0] });
+      alert("Teilzahlung hinzugefügt.");
+    }
 
     function addClaim() {
       const principal = parseFloat(document.getElementById("principal").value);
@@ -124,7 +155,6 @@
       const totalInterest = dailyInterest * days;
       const totalAmount = principal + totalInterest;
 
-      // Add the claim to the list
       claims.push({
         principal: principal.toFixed(2),
         interestRate: interestRate.toFixed(2),

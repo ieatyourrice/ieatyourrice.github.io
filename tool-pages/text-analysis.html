@@ -77,6 +77,7 @@
         return;
       }
 
+      // Count words, characters, sentences, and paragraphs
       const wordCount = text.split(/\s+/).filter(word => word).length;
       const charCount = text.length;
       const nonSpaceCharCount = text.replace(/\s/g, "").length;
@@ -84,6 +85,7 @@
       const paragraphCount = text.split(/
 +/).filter(paragraph => paragraph.trim()).length;
 
+      // Display the results
       resultDiv.innerHTML = `
         <p><strong>Analyseergebnisse:</strong></p>
         <p><strong>Anzahl der Wörter:</strong> ${wordCount}</p>
