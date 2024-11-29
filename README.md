@@ -1,2 +1,0 @@
-# ieatyourrice.github.io
-testseite
