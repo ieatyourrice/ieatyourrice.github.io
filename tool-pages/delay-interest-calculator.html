@@ -30,13 +30,24 @@
     .calculator-container button:hover {
       background-color: #005bb5;
     }
-    .result {
+    .claims-table {
+      width: 90%;
+      max-width: 800px;
+      margin: 20px auto;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .claims-table th, .claims-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+    }
+    .claims-table th {
+      background-color: #f4f4f4;
+    }
+    .result-summary {
       margin-top: 20px;
       font-size: 18px;
       text-align: center;
-    }
-    .result p {
-      margin: 5px 0;
     }
     .back-button {
       display: inline-block;
@@ -57,32 +68,49 @@
 <body>
   <div class="container calculator-container">
     <h1>Verzugszinsrechner</h1>
-    <p>Berechnen Sie Verzugszinsen basierend auf Ihrer Hauptforderung und dem Verzugszeitraum.</p>
+    <p>Fügen Sie mehrere Forderungen hinzu und berechnen Sie die Verzugszinsen.</p>
     <input type="number" id="principal" placeholder="Hauptforderung (€)" min="0" step="0.01">
     <input type="number" id="interestRate" placeholder="Verzugszinssatz (%)" min="0" step="0.01" value="5">
     <label for="startDate">Verzugsbeginn:</label>
     <input type="date" id="startDate">
     <label for="endDate">Verzugsende:</label>
     <input type="date" id="endDate">
-    <button onclick="calculateInterest()">Verzugszinsen berechnen</button>
-    <div id="result" class="result"></div>
+    <button onclick="addClaim()">Forderung hinzufügen</button>
+    <div>
+      <table class="claims-table" id="claimsTable">
+        <thead>
+          <tr>
+            <th>Hauptforderung (€)</th>
+            <th>Zinssatz (%)</th>
+            <th>Verzugsbeginn</th>
+            <th>Verzugsende</th>
+            <th>Verzugszinsen (€)</th>
+            <th>Gesamtbetrag (€)</th>
+            <th>Aktionen</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="resultSummary" class="result-summary"></div>
     <a href="../index.html" class="back-button">Zurück zur Startseite</a>
   </div>
   <script>
-    function calculateInterest() {
+    const claims = [];
+
+    function addClaim() {
       const principal = parseFloat(document.getElementById("principal").value);
       const interestRate = parseFloat(document.getElementById("interestRate").value);
       const startDate = new Date(document.getElementById("startDate").value);
       const endDate = new Date(document.getElementById("endDate").value);
-      const resultDiv = document.getElementById("result");
 
       if (isNaN(principal) || isNaN(interestRate) || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        resultDiv.innerHTML = '<p style="color: red;">Bitte geben Sie gültige Werte ein.</p>';
+        alert("Bitte geben Sie gültige Werte ein.");
         return;
       }
 
       if (endDate <= startDate) {
-        resultDiv.innerHTML = '<p style="color: red;">Das Enddatum muss nach dem Startdatum liegen.</p>';
+        alert("Das Enddatum muss nach dem Startdatum liegen.");
         return;
       }
 
@@ -94,15 +122,58 @@
       const annualInterest = (principal * interestRate) / 100;
       const dailyInterest = annualInterest / 365;
       const totalInterest = dailyInterest * days;
-
       const totalAmount = principal + totalInterest;
 
+      // Add the claim to the list
+      claims.push({
+        principal: principal.toFixed(2),
+        interestRate: interestRate.toFixed(2),
+        startDate: startDate.toISOString().split("T")[0],
+        endDate: endDate.toISOString().split("T")[0],
+        totalInterest: totalInterest.toFixed(2),
+        totalAmount: totalAmount.toFixed(2)
+      });
+
+      updateTable();
+    }
+
+    function updateTable() {
+      const tableBody = document.querySelector("#claimsTable tbody");
+      tableBody.innerHTML = "";
+
+      let totalPrincipal = 0;
+      let totalInterest = 0;
+      let totalAmount = 0;
+
+      claims.forEach((claim, index) => {
+        totalPrincipal += parseFloat(claim.principal);
+        totalInterest += parseFloat(claim.totalInterest);
+        totalAmount += parseFloat(claim.totalAmount);
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${claim.principal}</td>
+          <td>${claim.interestRate}</td>
+          <td>${claim.startDate}</td>
+          <td>${claim.endDate}</td>
+          <td>${claim.totalInterest}</td>
+          <td>${claim.totalAmount}</td>
+          <td><button onclick="deleteClaim(${index})">Löschen</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      const resultDiv = document.getElementById("resultSummary");
       resultDiv.innerHTML = `
-        <p><strong>Ergebnisse:</strong></p>
-        <p><strong>Verzugsdauer:</strong> ${days} Tage</p>
-        <p><strong>Verzugszinsen:</strong> €${totalInterest.toFixed(2)}</p>
+        <p><strong>Gesamtsumme der Hauptforderungen:</strong> €${totalPrincipal.toFixed(2)}</p>
+        <p><strong>Gesamtsumme der Verzugszinsen:</strong> €${totalInterest.toFixed(2)}</p>
         <p><strong>Gesamtbetrag:</strong> €${totalAmount.toFixed(2)}</p>
       `;
+    }
+
+    function deleteClaim(index) {
+      claims.splice(index, 1);
+      updateTable();
     }
   </script>
 </body>

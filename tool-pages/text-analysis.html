@@ -1,21 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6878152474987283"
-     crossorigin="anonymous"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Textanalyse</title>
   <link rel="stylesheet" href="../styles.css">
+  <style>
+    .text-analysis-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .text-analysis-container textarea {
+      width: 80%;
+      max-width: 400px;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+      height: 150px;
+    }
+    .text-analysis-container button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+      background-color: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .text-analysis-container button:hover {
+      background-color: #005bb5;
+    }
+    .analysis-result {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: left;
+      max-width: 400px;
+      margin: 20px auto;
+      word-wrap: break-word;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .back-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #0078d7;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .back-button:hover {
+      background-color: #005bb5;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container text-analysis-container">
     <h1>Textanalyse</h1>
-    <textarea id="textInput" placeholder="Text eingeben"></textarea>
+    <textarea id="textInput" placeholder="Geben Sie Ihren Text ein..."></textarea>
     <button onclick="analyzeText()">Analysieren</button>
-    <p id="analysisResult"></p>
-    <a href="../index.html">Zurück zur Startseite</a>
+    <div id="analysisResult" class="analysis-result"></div>
+    <a href="../index.html" class="back-button">Zurück zur Startseite</a>
   </div>
-  <script src="../text-analysis.js"></script>
+  <script>
+    function analyzeText() {
+      const text = document.getElementById("textInput").value.trim();
+      const resultDiv = document.getElementById("analysisResult");
+
+      if (!text) {
+        resultDiv.innerHTML = '<p style="color: red;">Bitte geben Sie einen Text ein.</p>';
+        return;
+      }
+
+      const wordCount = text.split(/\s+/).filter(word => word).length;
+      const charCount = text.length;
+      const nonSpaceCharCount = text.replace(/\s/g, "").length;
+      const sentenceCount = text.split(/[.!?]+/).filter(sentence => sentence.trim()).length;
+      const paragraphCount = text.split(/
++/).filter(paragraph => paragraph.trim()).length;
+
+      resultDiv.innerHTML = `
+        <p><strong>Analyseergebnisse:</strong></p>
+        <p><strong>Anzahl der Wörter:</strong> ${wordCount}</p>
+        <p><strong>Anzahl der Zeichen (inkl. Leerzeichen):</strong> ${charCount}</p>
+        <p><strong>Anzahl der Zeichen (ohne Leerzeichen):</strong> ${nonSpaceCharCount}</p>
+        <p><strong>Anzahl der Sätze:</strong> ${sentenceCount}</p>
+        <p><strong>Anzahl der Absätze:</strong> ${paragraphCount}</p>
+      `;
+    }
+  </script>
 </body>
 </html>
